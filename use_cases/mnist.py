@@ -1,64 +1,26 @@
 import sys
 import time
-
 import logging
 import os
 logging.disable(logging.WARNING)
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
-from tensorflow import keras
-from tensorflow.keras import layers
-
-import matplotlib.pyplot as plt
 import gzip
 import numpy as np
-from matplotlib import image, offsetbox
 import scipy.sparse.linalg
+import matplotlib.pyplot as plt
 from scipy.linalg import eig, eigh
 import struct
 
 import datafold.pcfold as pfold
 from datafold.dynfold import DiffusionMaps
-from datafold.utils.plot import plot_pairwise_eigenvector
 from datafold.pcfold.kernels import PCManifoldKernel
+from datafold.utils.plot import plot_pairwise_eigenvector
+from tensorflow import keras
+from tensorflow.keras import layers
 
 import full_matrix
-
-def plot_embedding(X, y, digits, title=None):
-    """Scale and visualize the embedding vectors"""
-    x_min, x_max = np.min(X, 0), np.max(X, 0)
-    X = (X - x_min) / (x_max - x_min)
-
-    plt.figure(figsize=[10, 10])
-    ax = plt.subplot(111)
-
-    for i in range(X.shape[0]):
-        plt.text(
-            X[i, 0],
-            X[i, 1],
-            str(y[i]),
-            color=plt.cm.Set1(y[i] / 10.0),
-            fontdict={"weight": "bold", "size": 9},
-        )
-
-    if hasattr(offsetbox, "AnnotationBbox"):
-        # only print thumbnails with matplotlib > 1.0
-        shown_images = np.array([[1.0, 1.0]])  # just something big
-        for i in range(X.shape[0]):
-            dist = np.sum((X[i] - shown_images) ** 2, 1)
-            if np.min(dist) < 4e-3:
-                # don't show points that are too close
-                continue
-            shown_images = np.r_[shown_images, [X[i]]]
-            imagebox = offsetbox.AnnotationBbox(
-                offsetbox.OffsetImage(digits[i], cmap=plt.cm.gray_r), X[i]
-            )
-            ax.add_artist(imagebox)
-    plt.xticks([]), plt.yticks([])
-
-    if title is not None:
-        plt.title(title)
-    plt.savefig('mnist_digits.png')
+from plot_embedding import plot_embedding
 
 executable = "./test_gofmm"
 problem_size = 1024
@@ -78,24 +40,13 @@ input_shape = (28, 28, 1)
 # Load the data and split it between train and test sets
 (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
 
-x_train = x_train.astype("float32") #/ 255
-
-# Make sure images have shape (28, 28, 1)
-#x_train = np.expand_dims(x_train, -1)
-print("x_train shape:", x_train.shape)
-print("y_train shape:", y_train.shape)
-print(x_train.shape[0], "train samples")
-
+x_train = x_train.astype("float32") / 255
 images = x_train[0:problem_size,:,:]
 y = y_train[0:problem_size]
-
-X = images
-print("X before reshape", X.shape)
 X = images.reshape(problem_size, 784)
-print("X sfter reshape", X)
-print("X shape:", X.shape)
-print("y shape:", y.shape)
 
+
+#DATAFOLD stuff
 X_pcm = pfold.PCManifold(X)
 X_pcm.optimize_parameters(result_scaling=2)
 
@@ -151,7 +102,7 @@ kernel_matrix = kernel_matrix.astype("float32")
 #kernel_matrix.tofile("KernelMatrix_32768.bin")
 weights = np.ones((problem_size, num_rhs))      
 
-
+#GOFMM stuff
 kernel_matrix_OP = full_matrix.FullMatrix( executable, problem_size, max_leaf_node_size,
                             num_of_neighbors, max_off_diagonal_ranks, num_rhs, user_tolerance, computation_budget,
                             distance_type, matrix_type, kernel_type, kernel_matrix, weights, dtype=np.float32 )
