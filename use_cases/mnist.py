@@ -127,7 +127,7 @@ print("eigenvectors of datafold")
 print(dmap.eigenvectors_)
 
 plot_pairwise_eigenvector(
-    eigenvectors=sorted_scipy_evecs[:, 1:],
+    eigenvectors=evecs_all[:, 1:],
     n=0,
     idx_start=1,
     fig_params=dict(figsize=(10, 10)),
@@ -135,7 +135,7 @@ plot_pairwise_eigenvector(
 )
 plt.savefig('mnist_digits_scipy.png')
 plot_pairwise_eigenvector(
-    eigenvectors=sorted_gofmm_evecs[:, 1:],
+    eigenvectors=evecs_large[:, 1:],
     n=0,
     idx_start=1,
     fig_params=dict(figsize=(10, 10)),
