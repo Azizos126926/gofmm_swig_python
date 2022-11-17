@@ -1,13 +1,21 @@
 import sys
 import time
 
+import logging
+import os
+logging.disable(logging.WARNING)
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
+from tensorflow import keras
+from tensorflow.keras import layers
+
 import matplotlib.pyplot as plt
+import gzip
 import numpy as np
 from matplotlib import image, offsetbox
-from sklearn import datasets
 import scipy.sparse.linalg
 from scipy.linalg import eig, eigh
-from sklearn.model_selection import train_test_split
+import struct
 
 import datafold.pcfold as pfold
 from datafold.dynfold import DiffusionMaps
@@ -15,9 +23,6 @@ from datafold.utils.plot import plot_pairwise_eigenvector
 from datafold.pcfold.kernels import PCManifoldKernel
 
 import full_matrix
-
-# Source code taken and adapted from https://scikit-learn.org/stable/auto_examples/manifold/plot_lle_digits.html
-
 
 def plot_embedding(X, y, digits, title=None):
     """Scale and visualize the embedding vectors"""
@@ -53,7 +58,7 @@ def plot_embedding(X, y, digits, title=None):
 
     if title is not None:
         plt.title(title)
-    plt.savefig('hand_written_digits.png')
+    plt.savefig('mnist_digits.png')
 
 executable = "./test_gofmm"
 problem_size = 1024
@@ -67,18 +72,29 @@ distance_type = "kernel"
 matrix_type = "dense"
 kernel_type = "gaussian"
 
-digits = datasets.load_digits(n_class=6)
-X = digits.data[0:problem_size,:]
-y = digits.target[0:problem_size]
-images = digits.images[0:problem_size,:,:]
-print("X",X)
-print("images",images)
-print("images shape",images.shape)
-print("target",y)
+num_classes = 10
+input_shape = (28, 28, 1)
 
-X_train, X_test, y_train, y_test, images_train, images_test = train_test_split(
-    X, y, images, train_size=2 / 3, test_size=1 / 3
-)
+# Load the data and split it between train and test sets
+(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+
+x_train = x_train.astype("float32") #/ 255
+
+# Make sure images have shape (28, 28, 1)
+#x_train = np.expand_dims(x_train, -1)
+print("x_train shape:", x_train.shape)
+print("y_train shape:", y_train.shape)
+print(x_train.shape[0], "train samples")
+
+images = x_train[0:problem_size,:,:]
+y = y_train[0:problem_size]
+
+X = images
+print("X before reshape", X.shape)
+X = images.reshape(problem_size, 784)
+print("X sfter reshape", X)
+print("X shape:", X.shape)
+print("y shape:", y.shape)
 
 X_pcm = pfold.PCManifold(X)
 X_pcm.optimize_parameters(result_scaling=2)
@@ -118,11 +134,11 @@ plot_pairwise_eigenvector(
     scatter_params=dict(c=y),
 )
 
-plt.savefig('hr_digits_dmap.png')
+plt.savefig('mnist_digits_dmap.png')
 
 pcm = pfold.PCManifold(X, 
-                        kernel=pfold.DmapKernelFixed(internal_kernel=pfold.GaussianKernel(epsilon=378.0533464967807), is_stochastic=True, alpha=1, symmetrize_kernel=True),
-                        dist_kwargs=dict(cut_off=83.45058418010026, kmin=0, backend= "guess_optimal"))
+                        kernel=pfold.DmapKernelFixed(internal_kernel=pfold.GaussianKernel(epsilon=24.44322087308319), is_stochastic=True, alpha=1, symmetrize_kernel=True),
+                        dist_kwargs=dict(cut_off=21.219348907470703, kmin=0, backend= "guess_optimal"))
 
 kernel_output = pcm.compute_kernel_matrix()
 ( kernel_matrix, cdist_kwargs, ret_extra, ) = PCManifoldKernel.read_kernel_output(kernel_output=kernel_output)
@@ -194,7 +210,7 @@ plot_pairwise_eigenvector(
     fig_params=dict(figsize=(10, 10)),
     scatter_params=dict(c=y),
 )
-plt.savefig('hr_digits_scipy.png')
+plt.savefig('mnist_digits_scipy.png')
 plot_pairwise_eigenvector(
     eigenvectors=sorted_gofmm_evecs[:, 1:],
     n=0,
@@ -202,4 +218,4 @@ plot_pairwise_eigenvector(
     fig_params=dict(figsize=(10, 10)),
     scatter_params=dict(c=y),
 )
-plt.savefig('hr_digits_gofmm.png')
+plt.savefig('mnist_digits_gofmm.png')
