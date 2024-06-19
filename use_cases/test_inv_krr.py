@@ -85,7 +85,7 @@ def nonlinear_function(x):
 random_state = 42
 
 # Choose data generation method
-data_count = int(os.getenv('PROBLEM_SIZE', 8192))
+data_count = int(os.getenv('PROBLEM_SIZE', 4096))
 data_choice = 'gaussian'  # Options: 'boston', 'uniform', 'gaussian', 'circular', 'mixture', 'high_dim'
 
 if data_choice == 'uniform':

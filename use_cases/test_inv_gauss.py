@@ -86,7 +86,7 @@ def nonlinear_function(x):
 # Choose data generation method
 data_count = int(os.getenv('PROBLEM_SIZE', 4096))  # default to 1000 if not set
 data_count = int(data_count / 0.8)
-data_choice = 'gaussian'  # Options: 'boston', 'uniform', 'gaussian', 'circular', 'mixture', 'high_dim'
+data_choice = 'gaussian'  # Options:  'uniform', 'gaussian', 'circular', 'mixture', 'high_dim'
 
 if data_choice == 'uniform':
     X = generate_uniform_data(data_count)
@@ -95,12 +95,12 @@ elif data_choice == 'gaussian':
     X = generate_gaussian_data(data_count)
     y = nonlinear_function(X[:, 0])  # Using only the first feature for the nonlinear function
 elif data_choice == 'circular':
-    X_train = generate_circular_data(data_count)
+    X = generate_circular_data(data_count)
     y = nonlinear_function(X[:, 0])  # Using only the first feature for the nonlinear function
 elif data_choice == 'mixture':
     X = generate_mixture_of_gaussians(data_count, centers=[(-2, -2), (2, 2), (-2, 2), (2, -2)], cluster_std=[0.5, 0.5, 0.5, 0.5])
     y = nonlinear_function(X[:, 0])  # Using only the first feature for the nonlinear function
-elif data_choice == 'high_dim':
+elif data_choice == 'high_dim':# BAD PERF
     X = generate_high_dimensional_uniform_data(data_count, dimensions=10)
     y = nonlinear_function(X[:, 0])  # Using only the first feature for the nonlinear function
 # Example: Uncomment one of the following to generate different types of data
