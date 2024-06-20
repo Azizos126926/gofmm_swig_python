@@ -16,6 +16,21 @@ from sklearn.model_selection import train_test_split
 class Inverse_calculator:
     def __init__(self, executable, problem_size, max_leaf_node_size, num_of_neighbors, max_off_diagonal_ranks, num_rhs, user_tolerance, computation_budget,
                  distance_type, matrix_type, kernel_type, spd_matrix):
+        """
+        Initializes the GOFMM inverse calculator with the given parameters.
+        :param executable: Path to the GOFMM executable.
+        :param problem_size: Size of the problem (number of data points).
+        :param max_leaf_node_size: Maximum size of leaf nodes in the GOFMM tree.
+        :param num_of_neighbors: Number of neighbors for the GOFMM algorithm.
+        :param max_off_diagonal_ranks: Maximum ranks for off-diagonal blocks.
+        :param num_rhs: Number of right-hand sides (for multiple output regression).
+        :param user_tolerance: User-defined tolerance for the approximation.
+        :param computation_budget: Computation budget for the GOFMM algorithm.
+        :param distance_type: Type of distance metric used.
+        :param matrix_type: Type of matrix (dense or sparse).
+        :param kernel_type: Type of kernel function used.
+        :param spd_matrix: Symmetric positive definite matrix for inversion.
+        """
         self.executable = executable
         self.problem_size = problem_size
         self.max_leaf_node_size = max_leaf_node_size

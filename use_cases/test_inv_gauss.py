@@ -19,6 +19,21 @@ random_state = 42
 class Inverse_calculator:
     def __init__(self, executable, problem_size, max_leaf_node_size, num_of_neighbors, max_off_diagonal_ranks, num_rhs, user_tolerance, computation_budget,
                  distance_type, matrix_type, kernel_type, spd_matrix):
+        """
+        Initializes the GOFMM inverse calculator with the given parameters.
+        :param executable: Path to the GOFMM executable.
+        :param problem_size: Size of the problem (number of data points).
+        :param max_leaf_node_size: Maximum size of leaf nodes in the GOFMM tree.
+        :param num_of_neighbors: Number of neighbors for the GOFMM algorithm.
+        :param max_off_diagonal_ranks: Maximum ranks for off-diagonal blocks.
+        :param num_rhs: Number of right-hand sides (for multiple output regression).
+        :param user_tolerance: User-defined tolerance for the approximation.
+        :param computation_budget: Computation budget for the GOFMM algorithm.
+        :param distance_type: Type of distance metric used.
+        :param matrix_type: Type of matrix (dense or sparse).
+        :param kernel_type: Type of kernel function used.
+        :param spd_matrix: Symmetric positive definite matrix for inversion.
+        """
         self.executable = executable
         self.problem_size = problem_size
         self.max_leaf_node_size = max_leaf_node_size
@@ -37,14 +52,17 @@ class Inverse_calculator:
         self.matrix_length = self.problem_size * self.problem_size
 
     def matinv(self, lambda_inv):
-        # Create GOFMM tree from SPD matrix
+        """
+        Computes the inverse of the SPD matrix using GOFMM.
+        :param lambda_inv: Regularization parameter.
+        :return: Inverse of the SPD matrix.
+        """
         gofmmCalculator = tools.GofmmTree(self.executable, self.problem_size,
                                           self.max_leaf_node_size,
                                           self.num_of_neighbors, self.max_off_diagonal_ranks, self.num_rhs,
                                           self.user_tolerance, self.computation_budget,
                                           self.distance_type, self.matrix_type,
                                           self.kernel_type, self.denseSpd)
-        # Use GOFMM function inverse
         c = gofmmCalculator.InverseOfDenseSpdMatrix(lambda_inv, self.matrix_length)
         print("GOFMM Inverse passed")
 
@@ -52,7 +70,14 @@ class Inverse_calculator:
         inv_matrix = np.resize(c, (self.problem_size, self.problem_size))
         return inv_matrix
 
+
     def compute_rse(self, matExp, matThe):
+        """
+        Computes the Relative Standard Error (RSE) between two matrices.
+        :param matExp: Experimental matrix.
+        :param matThe: Theoretical matrix.
+        :return: RSE value.
+        """
         return np.linalg.norm(matExp - matThe) / sqrt(np.sum(matThe ** 2)) * 100
 
 # Data generation functions
