@@ -128,12 +128,6 @@ elif data_choice == 'mixture':
 elif data_choice == 'high_dim':# BAD PERF
     X = generate_high_dimensional_uniform_data(data_count, dimensions=10)
     y = nonlinear_function(X[:, 0])  # Using only the first feature for the nonlinear function
-# Example: Uncomment one of the following to generate different types of data
-#X = generate_uniform_data(data_count)
-#X = generate_gaussian_data(data_count)
-#X = generate_circular_data(data_count)
-#X = generate_mixture_of_gaussians(data_count, centers=[(-2, -2), (2, 2), (-2, 2), (2, -2)], cluster_std=[0.5, 0.5, 0.5, 0.5])
-#X = generate_high_dimensional_uniform_data(data_count, dimensions=10)
 
 
 # Split data into training and test sets
@@ -173,7 +167,10 @@ inverse_GOFMM_obj = Inverse_calculator(executable, problem_size, max_leaf_node_s
 inv_gofmm = inverse_GOFMM_obj.matinv(lambda_inv)
 end_time = time.time()
 execution_time_invGOFMM = end_time - start_time
+start_time = time.time()
 inv_spd = np.linalg.inv(kernel_matrix + lambda_inv * np.eye(problem_size))
+end_time = time.time()
+execution_time_invNumpy = end_time - start_time
 rse = inverse_GOFMM_obj.compute_rse(inv_gofmm, inv_spd)
 print(f"Relative Standard Error: {rse:.4e}")
 print("\n")
@@ -197,4 +194,7 @@ print(f"Mean np inverse diff with GP sklearn: {inverse_GOFMM_obj.compute_rse(mu_
 print("\n")
 print("-----------------------------------------------------------")
 print("Execution time: {:.6f} seconds for global GOFMM Inverse".format(execution_time_invGOFMM))
+print("\n")
+print("-----------------------------------------------------------")
+print("Execution time: {:.6f} seconds for global GOFMM Inverse".format(execution_time_invNumpy))
 print("\n")
