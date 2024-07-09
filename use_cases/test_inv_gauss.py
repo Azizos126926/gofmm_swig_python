@@ -109,7 +109,7 @@ def nonlinear_function(x):
     return np.sin(3 * x).ravel() + 0.1 * np.random.randn(data_count)
 
 # Choose data generation method
-data_count = int(os.getenv('PROBLEM_SIZE', 4096))  # default to 1000 if not set
+data_count = int(os.getenv('PROBLEM_SIZE', 8192))  # default to 1000 if not set
 data_count = int(data_count / 0.8)
 data_choice = 'gaussian'  # Options:  'uniform', 'gaussian', 'circular', 'mixture', 'high_dim'
 
@@ -146,7 +146,7 @@ max_leaf_node_size = int(problem_size / 2)
 num_of_neighbors = 0
 max_off_diagonal_ranks = int(problem_size / 2)
 num_rhs = 1
-user_tolerance = 1E-5
+user_tolerance = 1E-7
 computation_budget = 0.00
 distance_type = "kernel"
 matrix_type = "dense"
