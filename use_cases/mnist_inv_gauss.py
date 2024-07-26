@@ -62,7 +62,7 @@ x_train = x_train.reshape(x_train.shape[0], -1) / 255.0
 x_test = x_test.reshape(x_test.shape[0], -1) / 255.0
 
 # Set problem size
-problem_size = int(os.getenv('PROBLEM_SIZE', 8192))  # default if not set
+problem_size = int(os.getenv('PROBLEM_SIZE', 1024))  # default if not set
 
 # Use a subset of the data for quicker computation
 x_train, _, y_train, _ = train_test_split(x_train, y_train, train_size=problem_size, stratify=y_train, random_state=random_state)
@@ -81,13 +81,13 @@ executable = "./test_gofmm"
 max_leaf_node_size = int(problem_size / 2)
 num_of_neighbors = 0
 max_off_diagonal_ranks = int(problem_size / 2)
-num_rhs = 1
+num_rhs = 10
 user_tolerance = 1E-5
 computation_budget = 0.00
 distance_type = "kernel"
 matrix_type = "dense"
 kernel_type = "gaussian"
-lambda_inv = 0.01  # regularization parameter
+lambda_inv = 1  # regularization parameter
 
 # Compute the kernel matrix
 kernel_matrix = kernel_standard(x_train, x_train)
@@ -127,7 +127,7 @@ print("-----------------------------------------------------------")
 print("Execution time: {:.6f} seconds for global GOFMM Inverse".format(execution_time_invGOFMM))
 print("\n")
 print("-----------------------------------------------------------")
-print("Execution time: {:.6f} seconds for global GOFMM Inverse".format(execution_time_invNumpy))
+print("Execution time: {:.6f} seconds for global NUMPY Inverse".format(execution_time_invNumpy))
 print("\n")
 
 # Evaluate the model

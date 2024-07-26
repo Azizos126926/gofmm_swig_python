@@ -128,6 +128,12 @@ krr.fit(X_train, y_train)
 # Calculate the Gaussian kernel matrix using pairwise_kernels
 K = pairwise_kernels(X_train, metric='rbf', gamma=0.1)
 
+# Save the SPD matrix to a .BIN file
+spd_matrix_file = "spd_matrix.bin"
+K.astype(np.float32).tofile(spd_matrix_file)
+
+print(f"SPD matrix saved to {spd_matrix_file}")
+
 # Regularization parameter
 alpha = 0.1
 
