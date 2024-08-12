@@ -87,7 +87,7 @@ X_test = x_test.reshape((x_test.shape[0], -1))
 
 # Reducing dataset size for testing purposes
 # Set problem size
-problem_size = int(os.getenv('PROBLEM_SIZE', 8192))  # default if not set
+problem_size = int(os.getenv('PROBLEM_SIZE', 2048))  # default if not set
 X_train = X_train[:problem_size]
 y_train = y_train[:problem_size]
 
@@ -99,6 +99,11 @@ krr.fit(X_train, y_train)
 
 # Calculate the Gaussian kernel matrix using pairwise_kernels
 K = pairwise_kernels(X_train, metric='rbf', gamma=0.1)
+# Save the SPD matrix to a .BIN file
+spd_matrix_file = "MNIST_2048_1024_128_1024.bin"
+K.astype(np.float32).tofile(spd_matrix_file)
+
+print(f"SPD matrix saved to {spd_matrix_file}")
 
 # Regularization parameter
 alpha = 0.1
@@ -106,9 +111,9 @@ alpha = 0.1
 # Parameters for GOFMM
 executable = "./test_gofmm"
 max_leaf_node_size = int(problem_size / 2)
-num_of_neighbors = 0
+num_of_neighbors = 64
 max_off_diagonal_ranks = int(problem_size / 2)
-num_rhs = 1
+num_rhs = 10
 user_tolerance = 1E-5
 computation_budget = 0.00
 distance_type = "kernel"
@@ -158,3 +163,13 @@ print("Execution time: {:.6f} seconds for global GOFMM Inverse".format(execution
 print("\n")
 print("-----------------------------------------------------------")
 print("Execution time: {:.6f} seconds for numpy Inverse".format(execution_time_invNumpy))
+# Print every 100th element along with its (i, j) indices
+print("Every 100th element of the inverse kernel matrix (with indices):")
+
+rows, cols = inv_gofmm.shape
+step = 100
+
+for i in range(0, rows, step):
+    for j in range(0, cols, step):
+        # Print the value at (i, j) and its corresponding value
+        print(f"Element at ({i}, {j}): {inv_gofmm[i, j]}")
