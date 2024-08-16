@@ -55,10 +55,10 @@ Follow these steps to build and install the project:
 
 You can execute the distributed matrix inversion with a randomly generated kernel using the following command. This example uses 2 MPI processes:
 
-1. **Allocate resources using `salloc` (if applicable in your environment):**
+1. **Allocate resources using `salloc` :**
 
     ```bash
-    salloc --nodes=1 --ntasks-per-node=2 --time=00:10:00
+    salloc 
     ```
 
 2. **Run the program:**
@@ -68,5 +68,3 @@ You can execute the distributed matrix inversion with a randomly generated kerne
     `
 
 ---
-
-This setup should allow you to successfully compile, install, and run the distributed inverse matrix program using MPI within the `hmlp` framework.
