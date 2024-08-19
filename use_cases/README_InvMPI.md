@@ -40,10 +40,12 @@ Follow these steps to build and install the project:
     ```
 
 2. **Build the project:**
+3. ```
     change the file "set_env.sh" lines:
         export CC=mpiicc
         export CXX=mpiicpc
     and : export HMLP_USE_MPI=true
+   ```
 
     ```bash
     make
