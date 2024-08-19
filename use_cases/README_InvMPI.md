@@ -34,20 +34,21 @@ The instructions cover the necessary code modifications, file additions, and exe
 Follow these steps to build and install the project:
 
 1. **Navigate to the `hmlp` directory:**
-
-    ```bash
-    cd /path/to/hmlp
     ```
-
-2. **Build the project:**
-3. ```
     change the file "set_env.sh" lines:
         export CC=mpiicc
         export CXX=mpiicpc
     and : export HMLP_USE_MPI=true
    ```
+    ```bash
+    cd /path/to/hmlp
+    ```
+
+2. **Build the project:**
+3. 
 
     ```bash
+    cmake
     make
     ```
 
