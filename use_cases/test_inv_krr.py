@@ -3,6 +3,7 @@ import os
 import numpy as np
 import tools  # gofmm shared lib stuff
 from math import sqrt
+from scipy.linalg import inv
 import time
 import sys
 sys.path.insert(1, '../python')
@@ -141,10 +142,10 @@ alpha = 0.1
 executable = "./test_gofmm"
 problem_size = X_train.shape[0]
 max_leaf_node_size = int(problem_size / 2)
-num_of_neighbors = 128
+num_of_neighbors = 0
 max_off_diagonal_ranks = int(problem_size / 2)
-num_rhs = 10
-user_tolerance = 1E-5
+num_rhs = 1
+user_tolerance = 1E-3
 computation_budget = 0.00
 distance_type = "kernel"
 matrix_type = "dense"
@@ -166,7 +167,7 @@ execution_time_invGOFMM = end_time - start_time
 # Compute the inverse of the regularized kernel matrix using numpy
 start_time = time.time()
 K_reg = K + lambda_inv * np.eye(len(X_train))
-K_reg_inv = np.linalg.inv(K_reg)
+K_reg_inv = inv(K_reg)
 end_time = time.time()
 execution_time_invNumpy = end_time - start_time
 
@@ -194,13 +195,3 @@ print("Execution time: {:.6f} seconds for global GOFMM Inverse".format(execution
 print("\n")
 print("-----------------------------------------------------------")
 print("Execution time: {:.6f} seconds for numpy Inverse".format(execution_time_invNumpy))
-# Print every 100th element along with its (i, j) indices
-print("Every 100th element of the inverse kernel matrix (with indices):")
-
-rows, cols = inv_gofmm.shape
-step = 100
-
-for i in range(0, rows, step):
-    for j in range(0, cols, step):
-        # Print the value at (i, j) and its corresponding value
-        print(f"Element at ({i}, {j}): {inv_gofmm[i, j]}")

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tools  # gofmm shared lib stuff
 from math import sqrt
+from scipy.linalg import inv
 import time
 import sys
 sys.path.insert(1, '../python')
@@ -104,7 +105,7 @@ inv_gofmm = inverse_GOFMM_obj.matinv(lambda_inv)
 end_time = time.time()
 execution_time_invGOFMM = end_time - start_time
 start_time = time.time()
-inv_spd = np.linalg.inv(kernel_matrix + lambda_inv * np.eye(problem_size))
+inv_spd = inv(kernel_matrix + lambda_inv * np.eye(problem_size))
 end_time = time.time()
 execution_time_invNumpy = end_time - start_time
 rse = inverse_GOFMM_obj.compute_rse(inv_gofmm, inv_spd)

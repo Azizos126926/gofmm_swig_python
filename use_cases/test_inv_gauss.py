@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tools  # gofmm shared lib stuff
 from math import sqrt
+from scipy.linalg import inv
 import time
 import sys
 sys.path.insert(1, '../python')
@@ -146,7 +147,7 @@ max_leaf_node_size = int(problem_size / 2)
 num_of_neighbors = 0
 max_off_diagonal_ranks = int(problem_size / 2)
 num_rhs = 1
-user_tolerance = 1E-7
+user_tolerance = 1E-5
 computation_budget = 0.00
 distance_type = "kernel"
 matrix_type = "dense"
@@ -168,7 +169,7 @@ inv_gofmm = inverse_GOFMM_obj.matinv(lambda_inv)
 end_time = time.time()
 execution_time_invGOFMM = end_time - start_time
 start_time = time.time()
-inv_spd = np.linalg.inv(kernel_matrix + lambda_inv * np.eye(problem_size))
+inv_spd = inv(kernel_matrix + lambda_inv * np.eye(problem_size))
 end_time = time.time()
 execution_time_invNumpy = end_time - start_time
 rse = inverse_GOFMM_obj.compute_rse(inv_gofmm, inv_spd)
