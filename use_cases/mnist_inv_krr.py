@@ -112,9 +112,9 @@ alpha = 0.1
 # Parameters for GOFMM
 executable = "./test_gofmm"
 max_leaf_node_size = int(problem_size / 2)
-num_of_neighbors = 64
+num_of_neighbors = 0
 max_off_diagonal_ranks = int(problem_size / 2)
-num_rhs = 10
+num_rhs = 1
 user_tolerance = 1E-5
 computation_budget = 0.00
 distance_type = "kernel"
@@ -163,5 +163,3 @@ print("-----------------------------------------------------------")
 print("Execution time: {:.6f} seconds for global GOFMM Inverse".format(execution_time_invGOFMM))
 print("\n")
 print("-----------------------------------------------------------")
-print("Execution time: {:.6f} seconds for numpy Inverse".format(execution_time_invNumpy))
-# Print every 100th element along with its (i, j) indices
